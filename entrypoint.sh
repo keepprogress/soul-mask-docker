@@ -81,7 +81,7 @@ main(){
   if [ ! -f "$SOUL_MASK_SETTINGS" ]; then
     echo "-> Initializing SoulMask to generate settings file..."
     timeout -s SIGTERM 30s "$SOUL_MASK_DIR/StartServer.sh"
-    cp "$SOUL_MASK_DIR/GameXishu.json" "$SOUL_MASK_SETTINGS"
+    cp "/home/cover/WS/GameXishu.json" "$SOUL_MASK_SETTINGS"
 
     # Check if initialization is successful
     if [ ! -f "$SOUL_MASK_SETTINGS" ]; then

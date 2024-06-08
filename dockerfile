@@ -11,13 +11,13 @@ WORKDIR /home/steam/steamcmd
 RUN echo "$(uname -m)" > platform
 RUN mkdir -p /home/steam/WS/Saved
 
-COPY GameXishu.json /home/steam/WS/GameXishu.json
+COPY GameXishu.json /home/cover/GameXishu.json
 COPY entrypoint.sh /home/steam/WS/entrypoint.sh
 
 
 USER root
 
-RUN chown steam:steam /home/steam/WS/GameXishu.json && \
+RUN chown steam:steam /home/cover/WS/GameXishu.json && \
     chown steam:steam /home/steam/WS/entrypoint.sh && \
     chmod +x /home/steam/WS/entrypoint.sh
 
