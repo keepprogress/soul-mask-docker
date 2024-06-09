@@ -9,15 +9,15 @@ USER steam
 WORKDIR /home/steam/steamcmd
 
 RUN echo "$(uname -m)" > platform
-RUN mkdir -p /home/steam/WS/Saved
+RUN mkdir -p /home/steam/temp
 
-COPY GameXishu.json /home/cover/GameXishu.json
+COPY GameXishu.json /home/steam/temp/GameXishu.json
 COPY entrypoint.sh /home/steam/WS/entrypoint.sh
 
 
 USER root
 
-RUN chown steam:steam /home/cover/WS/GameXishu.json && \
+RUN chown steam:steam /home/steam/temp/GameXishu.json && \
     chown steam:steam /home/steam/WS/entrypoint.sh && \
     chmod +x /home/steam/WS/entrypoint.sh
 
