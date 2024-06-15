@@ -77,9 +77,6 @@ main(){
   echo "----------------------------------------"
   echo -e "Startup Parameters: \n$SOUL_MASK_DIR/StartServer.sh $args "
   echo "----------------------------------------"
-  echo -e "GameXishu.json config: \n"
-  cat "$SOUL_MASK_SETTINGS"
-  echo "----------------------------------------"
   echo "-> Starting the SoulMask..."
 
   cd "$WS_PATH"
