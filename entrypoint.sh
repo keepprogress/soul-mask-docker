@@ -8,8 +8,6 @@ STEAMCMD="/home/steam/steamcmd/steamcmd.sh"
 PLATFORM="$(cat /home/steam/steamcmd/platform)"
 WS_PATH="/home/steam/soul-mask"
 SOUL_MASK_DIR="/home/steam/soul-mask/WS"
-SOUL_MASK_SETTINGS="$SOUL_MASK_DIR/Saved/GameplaySettings/GameXishu.json"
-SOUL_MASK_SETTINGS_OUTSIDE="/home/steam/temp/GameXishu.json"
 
 
 # Install SoulMaskServer
@@ -74,27 +72,6 @@ main(){
   # Load startup arguments
   args=""
   set_args
-
-
-  # Load SoulMaskServer settings
-  # If the settings file does not exist, initialization is performed first
-  echo "----------------------------------------"
-
-  if [ ! -f "$SOUL_MASK_SETTINGS" ]; then
-    cp $SOUL_MASK_SETTINGS_OUTSIDE $SOUL_MASK_SETTINGS
-
-    # Check if initialization is successful
-    if [ ! -f "$SOUL_MASK_SETTINGS" ]; then
-      echo "Initialization failed: Unable to generate settings file. Please make sure the mounted archive directory has proper read and write permissions." >&2
-      exit 1
-    fi
-
-    sleep 5
-    echo "-> Successfully generated SoulMask settings file"
-  fi
-
-  set_settings
-  echo "-> Successfully loaded SoulMask settings file"
 
   # Start server
   echo "----------------------------------------"
