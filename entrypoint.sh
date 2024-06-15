@@ -6,28 +6,30 @@
 VERSION="v0.2.1"
 STEAMCMD="/home/steam/steamcmd/steamcmd.sh"
 PLATFORM="$(cat /home/steam/steamcmd/platform)"
-SOUL_MASK_DIR="/home/steam/WS"
+WS_PATH="/home/steam/soul-mask"
+SOUL_MASK_DIR="/home/steam/soul-mask/WS"
 SOUL_MASK_SETTINGS="$SOUL_MASK_DIR/Saved/GameplaySettings/GameXishu.json"
+SOUL_MASK_SETTINGS_OUTSIDE="/home/steam/temp/GameXishu.json"
 
 
 # Install SoulMaskServer
 install_server() {
   echo "-> Installing the server..."
-  "$STEAMCMD" +force_install_dir "$SOUL_MASK_DIR" +login anonymous +app_update 3017300 validate +quit
+  "$STEAMCMD" +force_install_dir "$WS_PATH" +login anonymous +app_update 3017300 validate +quit
 }
 
 # Whether to check for server updates
 check_update() {
   if [ "$CHECK_UPDATE_ON_START" = "true" ]; then
     echo "-> Checking for updates..."
-    "$STEAMCMD" +force_install_dir "$SOUL_MASK_DIR" +login anonymous +app_update 3017300 validate +quit
+    "$STEAMCMD" +force_install_dir "$WS_PATH" +login anonymous +app_update 3017300 validate +quit
   else
     echo "-> Skipping update check."
   fi
 }
 
 print_system_info() {
-  BUILD_ID=$("$STEAMCMD" +force_install_dir "$SOUL_MASK_DIR" +login anonymous +app_status 3017300 +quit | grep -e "BuildID" | awk '{print $8}')
+  BUILD_ID=$("$STEAMCMD" +force_install_dir "$WS_PATH" +login anonymous +app_status 3017300 +quit | grep -e "BuildID" | awk '{print $8}')
 
   echo "----------------------------------------"
   echo "SoulMaskServer-docker: $VERSION"
@@ -46,7 +48,7 @@ print_system_info() {
 
 # Set startup arguments
 set_args() {
-  args+= " -UTF8Output -MULTIHOME=0.0.0.0 -EchoPort=18888 -forcepassthrough -SteamServerName="ChiikawaServer" -PSW=000000 -MaxPlayers=16 -Port=8211 -adminpsw=666888 -saving=30 -backupinterval=1800 "
+  args+=" -UTF8Output -MULTIHOME=0.0.0.0 -EchoPort=18888 -forcepassthrough -SteamServerName='ChiikawaServer' -PSW=000000 -MaxPlayers=16 -Port=8211 -adminpsw=666888 -saving=30 -backupinterval=1800 "
 }
 
 main(){
@@ -56,14 +58,14 @@ main(){
 
 
   # Check install
-  if [ ! -f "$SOUL_MASK_DIR/StartServer.sh" ]; then
+  if [ ! -f "$WS_PATH/StartServer.sh" ]; then
     install_server
 
-    # Error check
-    if [ ! -f "$SOUL_MASK_DIR/StartServer.sh" ]; then
-      echo "Installation failed: Please make sure to reserve at least 10GB of free disk space." >&2
-      exit 1
-    fi
+#    # Error check
+#    if [ ! -f "$WS_PATH/StartServer.sh" ]; then
+#      echo "Installation failed: Please make sure to reserve at least 10GB of free disk space." >&2
+#      exit 1
+#    fi
   else
     check_update
   fi
@@ -74,14 +76,12 @@ main(){
   set_args
 
 
-  # Load PalWorld settings
+  # Load SoulMaskServer settings
   # If the settings file does not exist, initialization is performed first
   echo "----------------------------------------"
 
   if [ ! -f "$SOUL_MASK_SETTINGS" ]; then
-    echo "-> Initializing SoulMask to generate settings file..."
-    timeout -s SIGTERM 30s "$SOUL_MASK_DIR/StartServer.sh"
-    cp "/home/cover/WS/GameXishu.json" "$SOUL_MASK_SETTINGS"
+    cp $SOUL_MASK_SETTINGS_OUTSIDE $SOUL_MASK_SETTINGS
 
     # Check if initialization is successful
     if [ ! -f "$SOUL_MASK_SETTINGS" ]; then
@@ -96,7 +96,6 @@ main(){
   set_settings
   echo "-> Successfully loaded SoulMask settings file"
 
-
   # Start server
   echo "----------------------------------------"
   echo -e "Startup Parameters: \n$SOUL_MASK_DIR/StartServer.sh $args "
@@ -106,7 +105,9 @@ main(){
   echo "----------------------------------------"
   echo "-> Starting the SoulMask..."
 
-  "$SOUL_MASK_DIR"/StartServer.sh "$args"
+  cd "$WS_PATH"
+
+  ./StartServer.sh "$args"
 }
 
 main
